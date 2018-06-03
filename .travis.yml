@@ -1,0 +1,24 @@
+language: cpp
+sudo: required
+services:
+  - docker
+
+
+script:
+  - /bin/true
+
+before_deploy:
+  #- docker build . -t amolodykh/screenly-webview-build
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm -t  --name screenly-webview-build -e VERSION=$TRAVIS_TAG -v $TRAVIS_BUILD_DIR:/Screenly-webview  amolodykh/screenly-webview-build
+  - ls -la
+
+deploy:
+  provider: releases
+  api_key: d6d56cb82503711b0810f4ac98808ed34d9df666
+  file: "screenly-webview-v${TRAVIS_TAG}.tar.gz"
+  skip_cleanup: true
+  on:
+    repo: antonmolodykh/ScreenlyOSE-WebView
+    branch: master
+    #tags: true
